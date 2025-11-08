@@ -42,8 +42,17 @@
       "matchStrings": [
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?\"(?<currentValue>.*)\"\n"
       ],
-      "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+      "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}", 
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "fileMatch": ["^Dockerfile$", "^.*\\.dockerfile$", "^dockerfile\\.", "^.*\\/Dockerfile$"],
+      "matchStrings": [
+        "FROM\\s+(?<depName>[^:\\s]+):(?<currentValue>[^\\s@]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker",
+      "description": "Match Docker FROM statements in Dockerfiles"
     }
   ],
   "packageRules": [
@@ -71,6 +80,20 @@
       "groupSlug": "dev-dependencies",
       "semanticCommitType": "fix",
       "prPriority": -1
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "groupName": "Docker base images",
+      "semanticCommitType": "feat",
+      "prPriority": 10,
+      "schedule": ["every weekend"]
+    },
+    {
+      "matchFiles": ["devbox.json", "devbox.lock"],
+      "groupName": "Devbox dependencies",
+      "semanticCommitType": "build", 
+      "prPriority": 3
     }
   ],
   "commitBody": "Signed-off-by: {{{gitAuthor}}}",
